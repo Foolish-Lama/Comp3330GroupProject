@@ -1,12 +1,29 @@
 from torch import nn, optim
+import matplotlib.pyplot as plt
+import numpy as np
 
 from naturalScenesData import NaturalScenes
 from Model import Model
 
-data = NaturalScenes()
+def plot_performance(training):
+        plt.clf()
+        x = np.array([c for c, _ in enumerate(training["losses"], start=1)])
+        y = np.array([v for v in training["losses"]])
 
-#data.train_loader, data.valid_loader, data.test_loader
+        plt.subplot(2, 1, 1)
+        plt.plot(x, y)
+        plt.ylabel("loss")
 
+        x = np.array([c for c, _ in enumerate(training["accuracys"], start=1)])
+        y = np.array([v for v in training["accuracys"]])
+
+        plt.subplot(2, 1, 2)
+        plt.plot(x, y)
+        plt.ylabel("accuracy")
+        plt.ylim(0, 1)
+
+        plt.suptitle("model "+str(training["model_id"]))
+        plt.savefig("plots/model_"+str(training["model_id"]))
 
 module_list = nn.ModuleList([
     nn.Sequential(
@@ -35,8 +52,14 @@ module_list = nn.ModuleList([
     ),
 ])
 
+
+data = NaturalScenes()
+
 model = Model(1, module_list)
 model.optimizer = optim.Adam(model.parameters(), lr=0.01)
 model.loss_fn = nn.NLLLoss()
 
-model.test_model()
+model.test_model(data.train_loader, data.valid_loader, data.test_loader)
+
+training_output = model.learn_test(data.train_loader, data.valid_loader, data.test_loader, num_epochs=2)
+plot_performance(training_output)
