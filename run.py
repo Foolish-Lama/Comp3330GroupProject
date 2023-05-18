@@ -1,3 +1,6 @@
+
+# created by Ryan Davis, c3414318, ryan_davis00@hotmail.com
+
 from torch import nn, optim
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,6 +27,7 @@ def plot_performance(training):
 
         plt.suptitle("model "+str(training["model_id"]))
         plt.savefig("plots/model_"+str(training["model_id"]))
+
 
 module_list = nn.ModuleList([
     nn.Sequential(
@@ -63,3 +67,4 @@ model.test_model(data.train_loader, data.valid_loader, data.test_loader)
 
 training_output = model.learn_test(data.train_loader, data.valid_loader, data.test_loader, num_epochs=2)
 plot_performance(training_output)
+
