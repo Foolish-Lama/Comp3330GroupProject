@@ -15,7 +15,7 @@ class NaturalScenes():
         transforms.ToTensor()
     ])
     eval_transforms = transforms.Compose([
-        transforms.Resize(size=(144, 144)),
+        transforms.Resize(size=(144, 144)), #some of the images are not 150x150
         transforms.ToTensor()
     ])
 
