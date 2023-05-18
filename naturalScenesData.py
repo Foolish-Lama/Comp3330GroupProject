@@ -1,6 +1,10 @@
+
+# created by Ryan Davis, c3414318, ryan_davis00@hotmail.com
+
 from torch.utils.data import DataLoader, random_split
 from torchvision import transforms
 import torchvision
+
 
 
 class NaturalScenes():
@@ -16,7 +20,9 @@ class NaturalScenes():
     ])
 
     def __init__(self):
-        full_data = torchvision.datasets.ImageFolder("NaturalScenes\seg_train", transform=self.eval_transforms)
+
+        full_data = torchvision.datasets.ImageFolder("D:/projects/data/NaturalScenes/seg_train", transform=self.eval_transforms)
+
 
         train_data, valid_data, test_data = random_split([full_data[x] for x in range(1400)], [1000, 200, 200])
         #
