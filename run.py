@@ -53,7 +53,7 @@ module_list = nn.ModuleList([
 ])
 
 
-data = NaturalScenes()
+data = NaturalScenes('NaturalScenes\seg_train')
 
 model = Model(1, module_list)
 model.optimizer = optim.Adam(model.parameters(), lr=0.01)

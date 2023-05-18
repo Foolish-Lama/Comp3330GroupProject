@@ -16,8 +16,10 @@ class NaturalScenes():
         transforms.ToTensor()
     ])
 
-    def __init__(self):
-        full_data = torchvision.datasets.ImageFolder("NaturalScenes\seg_train", transform=self.eval_transforms)
+    def __init__(self, path):
+        self.path = path
+        
+        full_data = torchvision.datasets.ImageFolder(self.path, transform=self.eval_transforms)
 
         train_data, valid_data, test_data = random_split([full_data[x] for x in range(1400)], [1000, 200, 200])
         #
