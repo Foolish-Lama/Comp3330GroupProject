@@ -1,3 +1,6 @@
+# created by Ryan Davis, c3414318, ryan_davis00@hotmail.com
+
+
 import torch
 from torch import nn
 from time import time
