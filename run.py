@@ -57,14 +57,13 @@ module_list = nn.ModuleList([
 ])
 
 
-data = NaturalScenes('NaturalScenes\seg_train')
+data = NaturalScenes('D:/projects/data/NaturalScenes')
 
 model = Model(1, module_list)
-model.optimizer = optim.Adam(model.parameters(), lr=0.01)
+model.optimizer = optim.Adam(model.parameters(), lr=0.1)
 model.loss_fn = nn.NLLLoss()
 
-model.test_model(data.train_loader, data.valid_loader, data.test_loader)
 
-training_output = model.learn_test(data.train_loader, data.valid_loader, data.test_loader, num_epochs=2)
+training_output = model.learn_test(data.train_loader, data.valid_loader, data.test_loader, num_epochs=50)
 plot_performance(training_output)
 
