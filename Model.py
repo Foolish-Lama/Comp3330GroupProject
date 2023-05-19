@@ -4,6 +4,8 @@
 import torch
 from torch import nn
 from time import time
+import matplotlib.pyplot as plt
+import numpy as np
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Using {}'.format(device))
@@ -98,14 +100,15 @@ class Model(nn.Module):
             "duration": time()-start_t
         }
     
-    def learn_test(self, train_loader, valid_loader, test_loader, num_epochs=10):
+    def run(self, train_loader, valid_loader, test_loader, num_epochs=10):
         start_t = time()
 
         learn = self.learn(train_loader, valid_loader, num_epochs)
         test = self.test(test_loader)
 
         print("total time: ", str(time()-start_t))
-        return {
+
+        performance = {
             "model_id": self.id,
             "losses" : learn["losses"],
             "accuracys": learn["accuracys"],
@@ -114,7 +117,13 @@ class Model(nn.Module):
             "test_loss" : test["loss"],
             "test_accuracy": test["accuracy"]
             }
+        self.plot_performance(performance)
+        return performance
+    
+    def run(self, loaders, num_epochs=10):
+        return self.run(self, loaders[0], loaders[1], loaders[2], num_epochs)
         
+
     def test_model(self, train_loader, valid_loader, test_loader):
         # will fuck with training, alittle
         print()
@@ -122,4 +131,26 @@ class Model(nn.Module):
         self.learn(train_loader, valid_loader, 1)
         self.test(test_loader)
         print('successful')
+    
+    def test_model(self, loaders):
+        return self.test_model(self, loaders[0], loaders[1], loaders[2])
 
+    def plot_performance(training):
+            plt.clf()
+            x = np.array([c for c, _ in enumerate(training["losses"], start=1)])
+            y = np.array([v for v in training["losses"]])
+
+            plt.subplot(2, 1, 1)
+            plt.plot(x, y)
+            plt.ylabel("loss")
+
+            x = np.array([c for c, _ in enumerate(training["accuracys"], start=1)])
+            y = np.array([v for v in training["accuracys"]])
+
+            plt.subplot(2, 1, 2)
+            plt.plot(x, y)
+            plt.ylabel("accuracy")
+            plt.ylim(0, 1)
+
+            plt.suptitle("model "+str(training["model_id"]))
+            plt.savefig("plots/model_"+str(training["model_id"]))
