@@ -60,7 +60,7 @@ class Model(nn.Module):
 
                 output = self(d)
                 loss = self.loss_fn(output, l)
-                print(loss)
+                
 
 
                 e_accuracy += ((output.argmax(dim=1) == l).float().mean())/len(data_loader)

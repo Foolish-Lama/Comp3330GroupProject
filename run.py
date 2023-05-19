@@ -35,13 +35,16 @@ module_list = nn.ModuleList([
 ])
 
 
-data = NaturalScenes('NaturalScenes\seg_train')
+
+data = NaturalScenes('D:/projects/data/NaturalScenes')
 
 model = Model(1, module_list)
-model.optimizer = optim.Adam(model.parameters(), lr=0.01)
+model.optimizer = optim.Adam(model.parameters(), lr=0.1)
 model.loss_fn = nn.NLLLoss()
+
 
 model.test_model(data.loaders)
 
 training_output = model.run(data.loaders, num_epochs=2)
+
 
