@@ -1,4 +1,4 @@
-from torch import nn
+from torch import nn, optim
 
 class ActivationFunctions:
 
@@ -207,6 +207,10 @@ class LossFunctions():
 
 
 class Using2d():
+
+    loss_fn_class = nn.NLLLoss
+    optimizer_class = optim.Adam
+
     module_list_1 = nn.ModuleList([
         nn.Sequential(
             nn.Conv2d(3, 16, 3, 1, "same"),
@@ -342,3 +346,18 @@ class Using2d():
         ),
     ])
 
+    all_module_lists = [
+        module_list_1,
+        module_list_2,
+        module_list_3,
+        module_list_4,
+        module_list_5,
+    ]
+
+    all_module_titles = [
+        "1d logsoftmax",
+        "3d logsoftmax",
+        "1d dropout",
+        "3d dropout",
+        "many 3d dropout"
+    ]
