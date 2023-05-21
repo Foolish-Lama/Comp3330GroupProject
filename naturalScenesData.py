@@ -1,9 +1,9 @@
 
 # created by Ryan Davis, c3414318, ryan_davis00@hotmail.com
 
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, random_split, Subset
 from torchvision import transforms
-import torchvision
+from torchvision.datasets import ImageFolder
 
 
 
@@ -11,26 +11,38 @@ class NaturalScenes():
 
     train_transforms = transforms.Compose([
         transforms.RandomResizedCrop(scale=(0.6, 1.0), size=(144, 144)),
-        transforms. RandomHorizontalFlip(),
+        transforms.RandomHorizontalFlip(),
         transforms.ToTensor()
     ])
+    
     eval_transforms = transforms.Compose([
         transforms.Resize(size=(144, 144)), #some of the images are not 150x150
         transforms.ToTensor()
     ])
 
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, train_data_path, eval_data_path):
+        self.train_data = ImageFolder(train_data_path, transform=self.train_transforms)
+        self.train_loader = DataLoader(dataset=self.train_data, batch_size=64, shuffle=True)
+
+        eval_data = ImageFolder(eval_data_path, transform=self.eval_transforms)
+        validation_size = int(len(eval_data)*0.5)
+        test_size = int(len(eval_data) - validation_size)
+        self.validation_data, self.test_data = random_split(eval_data, [validation_size, test_size])
+        self.valid_loader = DataLoader(dataset=self.validation_data, batch_size=len(self.validation_data), shuffle=True)
+        self.test_loader = DataLoader(dataset=self.test_data, batch_size=len(self.test_data), shuffle=True)
         
-        full_data = torchvision.datasets.ImageFolder(self.path, transform=self.eval_transforms)
+        self.loaders = [self.train_loader, self.valid_loader, self.test_loader]
 
-        train_size = int(len(full_data)*0.7)
-        valid_size = int((len(full_data) - train_size) * 0.15)
-        test_size = int(len(full_data) - train_size - valid_size)
-        train_data, valid_data, test_data = random_split(full_data, [train_size, valid_size, test_size])
-        #[full_data[x] for x in range(1400)]
+class NaturalScenesSubset(NaturalScenes):
+    def __init__(self, train_data_path, eval_data_path):
+        super().__init__(train_data_path, eval_data_path)
+        self.train_data = Subset(self.train_data, [i for i, _ in enumerate(self.train_data) if i % 5 == 0])
+        self.train_loader = DataLoader(dataset=self.train_data, batch_size=64, shuffle=True)
 
-        self.train_loader = DataLoader(dataset=train_data, batch_size=64, shuffle=True)
-        self.valid_loader = DataLoader(dataset=valid_data, batch_size=len(valid_data), shuffle=True)
-        self.test_loader = DataLoader(dataset=test_data, batch_size=len(test_data), shuffle=True)
-        self.data = [self.train_loader, self.valid_loader, self.test_loader]
+        self.validation_data = Subset(self.validation_data, [i for i, _ in enumerate(self.validation_data) if i % 5 == 0])
+        self.valid_loader = DataLoader(dataset=self.validation_data, batch_size=len(self.validation_data), shuffle=True)
+        
+        self.test_data = Subset(self.test_data, [i for i, _ in enumerate(self.test_data) if i % 5 == 0])
+        self.test_loader = DataLoader(dataset=self.test_data, batch_size=len(self.test_data), shuffle=True)
+        
+        self.loaders = [self.train_loader, self.valid_loader, self.test_loader]

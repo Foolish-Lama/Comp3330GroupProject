@@ -3,48 +3,23 @@
 
 from torch import nn, optim
 
-from naturalScenesData import NaturalScenes
+from naturalScenesData import NaturalScenes, NaturalScenesSubset
 from Model import Model
-
-
-module_list = nn.ModuleList([
-    nn.Sequential(
-        nn.Conv2d(3, 16, 3, 1, "same"),
-        nn.BatchNorm2d(16),
-        nn.ReLU(),
-        nn.MaxPool2d(2)
-    ),
-    nn.Sequential(
-        nn.Conv2d(16, 32, 3, 1, "same"),
-        nn.BatchNorm2d(32),
-        nn.ReLU(),
-        nn.MaxPool2d(2)
-    ),
-    nn.Sequential(
-        nn.Conv2d(32, 64, 3, 1, "same"),
-        nn.BatchNorm2d(64),
-        nn.ReLU(),
-        nn.MaxPool2d(2)
-    ),
-    nn.Sequential(
-        nn.Flatten(),
-        nn.Linear(20736, 6),
-        nn.Dropout(),
-        nn.LogSoftmax(dim=1)
-    ),
-])
+import ModuleLists
 
 
 
-data = NaturalScenes('D:/projects/data/NaturalScenes')
-
-model = Model(1, module_list)
-model.optimizer = optim.Adam(model.parameters(), lr=0.1)
-model.loss_fn = nn.NLLLoss()
+activationFunctions = ModuleLists.ActivationFunctions()
 
 
-model.test_model(data.loaders)
 
-training_output = model.run(data.loaders, num_epochs=2)
+data = NaturalScenesSubset('D:/projects/data/NaturalScenes/seg_train', 'D:/projects/data/NaturalScenes/seg_test')
 
+for module_list, title, i in zip(activationFunctions.all_module_lists, activationFunctions.all_module_titles, range(1, len(activationFunctions.all_module_lists))):
+    model = Model(i, '/activationFunctions', module_list, optim.Adam, nn.NLLLoss)
+    model.test_model(*data.loaders)
+
+for module_list, title, i in zip(activationFunctions.all_module_lists, activationFunctions.all_module_titles, range(1, len(activationFunctions.all_module_lists))):
+    model = Model(i, '/activationFunctions', module_list, optim.Adam, nn.NLLLoss)
+    model.run(*data.loaders, num_epochs=10)
 
