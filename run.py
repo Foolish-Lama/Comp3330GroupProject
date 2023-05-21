@@ -16,9 +16,7 @@ activationFunctions = ModuleLists.ActivationFunctions()
 data = NaturalScenesSubset('D:/projects/data/NaturalScenes/seg_train', 'D:/projects/data/NaturalScenes/seg_test')
 
 for module_list, title, i in zip(activationFunctions.all_module_lists, activationFunctions.all_module_titles, range(1, len(activationFunctions.all_module_lists))):
-    optimizer = optim.Adam(model.parameters(), lr=0.1)
-    loss_fn = nn.NLLLoss()
-    model = Model(i, 'results/activationFunctions', module_list, optimizer, loss_fn)
+    model = Model(i, 'results/activationFunctions', module_list, optim.Adam, nn.NLLLoss)
     model.test_model(*data.loaders)
     model.run(*data.loaders, num_epochs=10)
 

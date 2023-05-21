@@ -16,7 +16,7 @@ print('Using {}'.format(device))
 
 class Model(nn.Module):
 
-    def __init__(self, id, output_path, module_list, optimizer, loss_fn):
+    def __init__(self, id, output_path, module_list, optimizer_class, loss_fn_class):
         super(Model, self).__init__()
         self.id = id
 
@@ -29,8 +29,8 @@ class Model(nn.Module):
         self.performances_file = json_file(self.output_folder+"/performances.json")
 
         self.module_list = module_list
-        self.optimizer = optimizer
-        self.loss_fn = loss_fn
+        self.optimizer = optimizer_class(self.parameters(), lr=0.1)
+        self.loss_fn = loss_fn_class()
         self.to(device)
 
     def forward(self, x):
