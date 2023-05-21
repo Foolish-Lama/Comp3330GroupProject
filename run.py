@@ -7,7 +7,7 @@ from naturalScenesData import NaturalScenes
 from Model import Model
 
 
-module_list = nn.ModuleList([
+module_list_1 = nn.ModuleList([
     nn.Sequential(
         nn.Conv2d(3, 16, 3, 1, "same"),
         nn.BatchNorm2d(16),
@@ -34,17 +34,31 @@ module_list = nn.ModuleList([
     ),
 ])
 
+module_list_2 = nn.ModuleList([
+    nn.Sequential(
+        nn.Conv2d(3, 16, 3, 1, "same"),
+        nn.BatchNorm2d(16),
+        nn.ReLU(),
+        nn.MaxPool2d(4)
+    ),
+    nn.Sequential(
+        nn.Flatten(),
+        nn.Linear(20736, 1296),
+        nn.Linear(1296, 36),
+        nn.Linear(36, 6),
+        nn.ReLU()
+    )
+])
 
 
-data = NaturalScenes('D:/projects/data/NaturalScenes')
 
-model = Model(1, module_list)
+data = NaturalScenes('D:/projects/data/NaturalScenes/seg_train')
+
+model = Model(1, module_list_1)
 model.optimizer = optim.Adam(model.parameters(), lr=0.1)
-model.loss_fn = nn.NLLLoss()
+model.loss_fn = nn.CrossEntropyLoss()
 
 
-model.test_model(data.loaders)
-
-training_output = model.run(data.loaders, num_epochs=2)
+model.run(*data.loaders, num_epochs=15)
 
 

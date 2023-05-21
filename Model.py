@@ -6,14 +6,19 @@ from torch import nn
 from time import time
 import matplotlib.pyplot as plt
 import numpy as np
+import uuid
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Using {}'.format(device))
 
 class Model(nn.Module):
+
+    performance_counter = 0
+
     def __init__(self, id, module_list):
         super(Model, self).__init__()
         self.id = id
+
         self.module_list = module_list
 
         self.optimizer = None
@@ -119,10 +124,6 @@ class Model(nn.Module):
             }
         self.plot_performance(performance)
         return performance
-    
-    def run(self, loaders, num_epochs=10):
-        return self.run(self, loaders[0], loaders[1], loaders[2], num_epochs)
-        
 
     def test_model(self, train_loader, valid_loader, test_loader):
         # will fuck with training, alittle
@@ -132,25 +133,24 @@ class Model(nn.Module):
         self.test(test_loader)
         print('successful')
     
-    def test_model(self, loaders):
-        return self.test_model(self, loaders[0], loaders[1], loaders[2])
-
-    def plot_performance(training):
+    def plot_performance(self, performance):
             plt.clf()
-            x = np.array([c for c, _ in enumerate(training["losses"], start=1)])
-            y = np.array([v for v in training["losses"]])
+            x = np.array([c for c, _ in enumerate(performance["losses"], start=1)])
+            y = np.array([v for v in performance["losses"]])
 
             plt.subplot(2, 1, 1)
             plt.plot(x, y)
             plt.ylabel("loss")
 
-            x = np.array([c for c, _ in enumerate(training["accuracys"], start=1)])
-            y = np.array([v for v in training["accuracys"]])
+            x = np.array([c for c, _ in enumerate(performance["accuracys"], start=1)])
+            y = np.array([v for v in performance["accuracys"]])
 
             plt.subplot(2, 1, 2)
             plt.plot(x, y)
             plt.ylabel("accuracy")
             plt.ylim(0, 1)
 
-            plt.suptitle("model "+str(training["model_id"]))
-            plt.savefig("plots/model_"+str(training["model_id"]))
+            plt.suptitle("model "+str(performance["model_id"]))
+
+
+            plt.savefig("plots/model_{}_uuid_{}".format(self.id, uuid.uuid1().hex))
