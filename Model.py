@@ -7,23 +7,30 @@ from time import time
 import matplotlib.pyplot as plt
 import numpy as np
 import uuid
+import os
+
+from jsonFile import json_file
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Using {}'.format(device))
 
 class Model(nn.Module):
 
-    performance_counter = 0
-
-    def __init__(self, id, module_list):
+    def __init__(self, id, output_path, module_list, optimizer, loss_fn):
         super(Model, self).__init__()
         self.id = id
 
+        self.output_folder = output_path
+        if not os.path.exists(self.output_folder):
+            os.mkdir(self.output_folder) 
+        self.plots_folder = self.output_folder+"/plots"
+        if not os.path.exists(self.plots_folder):
+            os.mkdir(self.plots_folder) 
+        self.performances_file = json_file(self.output_folder+"/performances.json")
+
         self.module_list = module_list
-
-        self.optimizer = None
-        self.loss_fn = None
-
+        self.optimizer = optimizer
+        self.loss_fn = loss_fn
         self.to(device)
 
     def forward(self, x):
@@ -105,7 +112,7 @@ class Model(nn.Module):
             "duration": time()-start_t
         }
     
-    def run(self, train_loader, valid_loader, test_loader, num_epochs=10):
+    def run(self, train_loader, valid_loader, test_loader, title='', num_epochs=10):
         start_t = time()
 
         learn = self.learn(train_loader, valid_loader, num_epochs)
@@ -114,7 +121,6 @@ class Model(nn.Module):
         print("total time: ", str(time()-start_t))
 
         performance = {
-            "model_id": self.id,
             "losses" : learn["losses"],
             "accuracys": learn["accuracys"],
             "train_duration": learn["duration"],
@@ -122,7 +128,8 @@ class Model(nn.Module):
             "test_loss" : test["loss"],
             "test_accuracy": test["accuracy"]
             }
-        self.plot_performance(performance)
+        self.performances_file.add(performance)
+        self.plot_performance(performance, title)
         return performance
 
     def test_model(self, train_loader, valid_loader, test_loader):
@@ -133,24 +140,23 @@ class Model(nn.Module):
         self.test(test_loader)
         print('successful')
     
-    def plot_performance(self, performance):
-            plt.clf()
-            x = np.array([c for c, _ in enumerate(performance["losses"], start=1)])
-            y = np.array([v for v in performance["losses"]])
+    def plot_performance(self, performance, title=''):
+        plt.clf()
+        x = np.array([c for c, _ in enumerate(performance["losses"], start=1)])
+        y = np.array([v for v in performance["losses"]])
 
-            plt.subplot(2, 1, 1)
-            plt.plot(x, y)
-            plt.ylabel("loss")
+        plt.subplot(2, 1, 1)
+        plt.plot(x, y)
+        plt.ylabel("loss")
 
-            x = np.array([c for c, _ in enumerate(performance["accuracys"], start=1)])
-            y = np.array([v for v in performance["accuracys"]])
+        x = np.array([c for c, _ in enumerate(performance["accuracys"], start=1)])
+        y = np.array([v for v in performance["accuracys"]])
 
-            plt.subplot(2, 1, 2)
-            plt.plot(x, y)
-            plt.ylabel("accuracy")
-            plt.ylim(0, 1)
+        plt.subplot(2, 1, 2)
+        plt.plot(x, y)
+        plt.ylabel("accuracy")
+        plt.ylim(0, 1)
 
-            plt.suptitle("model "+str(performance["model_id"]))
+        plt.suptitle("model {}: {}".format(self.id, title))
 
-
-            plt.savefig("plots/model_{}_uuid_{}".format(self.id, uuid.uuid1().hex))
+        plt.savefig("{}/model_{}_uuid_{}".format(self.plots_folder, self.id, uuid.uuid1().hex))
