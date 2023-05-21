@@ -153,3 +153,192 @@ class ActivationFunctions:
         "LeakyReLU",
         "ELU",
     ]
+
+class LossFunctions():
+
+    module_list = nn.ModuleList([
+        nn.Sequential(
+            nn.Conv2d(3, 16, 3, 1, "same"),
+            nn.BatchNorm2d(16),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(16, 32, 3, 1, "same"),
+            nn.BatchNorm2d(32),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(32, 64, 3, 1, "same"),
+            nn.BatchNorm2d(64),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(20736, 6),
+            nn.Dropout(),
+            nn.LogSoftmax(dim=1)
+        ),
+    ])
+
+    all_loss_functions = [
+        nn.L1Loss,
+        nn.MSELoss,
+        nn.NLLLoss,
+        nn.CrossEntropyLoss,
+        nn.HingeEmbeddingLoss,
+        nn.MarginRankingLoss,
+        nn.TripletMarginLoss,
+        nn.KLDivLoss
+    ]
+
+    all_loss_function_titles = [
+        "L1Loss",
+        "MSELoss",
+        "NLLLoss",
+        "CrossEntropyLoss",
+        "HingeEmbeddingLoss",
+        "MarginRankingLoss",
+        "TripletMarginLoss",
+        "KLDivLoss"
+    ]
+
+
+class Using2d():
+    module_list_1 = nn.ModuleList([
+        nn.Sequential(
+            nn.Conv2d(3, 16, 3, 1, "same"),
+            nn.BatchNorm2d(16),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(16, 32, 3, 1, "same"),
+            nn.BatchNorm2d(32),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(32, 64, 3, 1, "same"),
+            nn.BatchNorm2d(64),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(20736, 6),
+            nn.LogSoftmax(dim=1)
+        ),
+    ])
+
+    module_list_2 = nn.ModuleList([
+        nn.Sequential(
+            nn.Conv2d(3, 16, 3, 1, "same"),
+            nn.BatchNorm2d(16),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(16, 32, 3, 1, "same"),
+            nn.BatchNorm2d(32),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(32, 64, 3, 1, "same"),
+            nn.BatchNorm2d(64),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.LogSoftmax(dim=3),
+            nn.Flatten(),
+            nn.Linear(20736, 6),
+            nn.LogSoftmax(dim=1)
+        ),
+    ])
+
+    module_list_3 = nn.ModuleList([
+        nn.Sequential(
+            nn.Conv2d(3, 16, 3, 1, "same"),
+            nn.BatchNorm2d(16),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(16, 32, 3, 1, "same"),
+            nn.BatchNorm2d(32),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(32, 64, 3, 1, "same"),
+            nn.BatchNorm2d(64),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(20736, 6),
+            nn.Dropout(),
+            nn.LogSoftmax(dim=1)
+
+        ),
+    ])
+
+    module_list_4 = nn.ModuleList([
+        nn.Sequential(
+            nn.Conv2d(3, 16, 3, 1, "same"),
+            nn.BatchNorm2d(16),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(16, 32, 3, 1, "same"),
+            nn.BatchNorm2d(32),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(32, 64, 3, 1, "same"),
+            nn.Dropout3d(),
+            nn.BatchNorm2d(64),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(20736, 6),
+            nn.LogSoftmax(dim=1)
+        ),
+    ])
+
+    module_list_5 = nn.ModuleList([
+        nn.Sequential(
+            nn.Conv2d(3, 16, 3, 1, "same"),
+            nn.Dropout3d(),
+            nn.BatchNorm2d(16),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(16, 32, 3, 1, "same"),
+            nn.Dropout3d(),
+            nn.BatchNorm2d(32),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.Conv2d(32, 64, 3, 1, "same"),
+            nn.Dropout3d(),
+            nn.BatchNorm2d(64),
+            nn.Tanh(),
+            nn.MaxPool2d(2)
+        ),
+        nn.Sequential(
+            nn.LogSoftmax(dim=3)
+        ),
+    ])
+
