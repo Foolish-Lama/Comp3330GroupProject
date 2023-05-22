@@ -38,37 +38,13 @@ module_list = nn.ModuleList([
 ])
 
 outputFile = "bestModel"
-optimizer_class = optim.NAdam
+optimizer_class = optim.Adam
 loss_fn_class = nn.NLLLoss
 
-title = "bestModel2"
-id = 2
+title = "bestModel3"
+id = 3
 
 model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
 model.run(*data.loaders, title=title, num_epochs=100)
 
 
-failed_tests = []
-
-ActivationFunctions = ModuleLists.ActivationFunctions()
-
-for ml, title, i in zip(ActivationFunctions.all_module_lists, ActivationFunctions.all_module_titles, range(1, len(ActivationFunctions.all_module_lists))):
-    try:
-        model = Model(i, 'ActivationFunctionsFullData', ml, ActivationFunctions.optimizer_class, ActivationFunctions.loss_fn_class)
-        model.run(*data.loaders, title=title, num_epochs=10)
-    except:
-        s = str(i) + " " + title
-        failed_tests.append(s)
-        print(s + "failed")
-
-
-Optimizers = ModuleLists.Optimizers()
-
-for op, title, i in zip(Optimizers.all_optimzers, Optimizers.all_optimzers_titles, range(1, len(Optimizers.all_optimzers))):
-    try:
-        model = Model(i, 'OptimizersFullData', Optimizers.module_list, op, Optimizers.loss_fn_class)
-        model.run(*data.loaders, title=title, num_epochs=5)
-    except:
-        s = str(i) + " " + title
-        failed_tests.append(s)
-        print(s + "failed")
