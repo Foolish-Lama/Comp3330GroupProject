@@ -162,7 +162,7 @@ class Model(nn.Module):
     
     def plot_performance(self, performance, title=''):
         plt.clf()
-        x = np.array([c for c, _ in enumerate(performance["losses"], start=1)])
+        x = np.array([c for c, _ in enumerate(performance["train_losses"], start=1)])
         y1 = np.array([v for v in performance["train_losses"]])
         y2 = np.array([v for v in performance["eval_losses"]])
 
@@ -173,7 +173,7 @@ class Model(nn.Module):
 
         plt.ylabel("loss")
 
-        x = np.array([c for c, _ in enumerate(performance["accuracys"], start=1)])
+        x = np.array([c for c, _ in enumerate(performance["train_accuracys"], start=1)])
         y1 = np.array([v for v in performance["train_accuracys"]])
         y2 = np.array([v for v in performance["eval_accuracys"]])
 
