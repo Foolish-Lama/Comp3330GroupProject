@@ -25,7 +25,10 @@ class Model(nn.Module):
             os.mkdir(self.output_folder) 
         self.plots_folder = self.output_folder+"/plots"
         if not os.path.exists(self.plots_folder):
-            os.mkdir(self.plots_folder) 
+            os.mkdir(self.plots_folder)
+        self.state_dic_folder = self.output_folder+"/state_dics"
+        if not os.path.exists(self.state_dic_folder):
+            os.mkdir(self.state_dic_folder) 
         self.performances_file = json_file(self.output_folder+"/performances.json")
 
         self.module_list = module_list
@@ -81,25 +84,37 @@ class Model(nn.Module):
 
     def learn(self, train_loader, eval_loader, num_epochs=10):
         start_t = time()
+        train_losses = []
+        train_accs = []
         eval_losses = []
         eval_accs = []
+        best_accuracy = 0
+        best_state_dic = None
         for epoch in range(num_epochs):
             start_t = time()
-            self.evolve(train_loader)
+            train_loss, train_acc = self.evolve(train_loader)
             eval_loss, eval_acc = self.validate(eval_loader)
+            train_losses.append(train_loss)
+            train_accs.append(train_acc)
             eval_losses.append(eval_loss)
             eval_accs.append(eval_acc)
+            if eval_acc > best_accuracy:
+                best_accuracy = eval_acc
+                best_state_dic = self.state_dict()
         
         print()
-        print("Model: " + str(self.id))
-        print("Epochs: " + str(num_epochs))
-        print("Final Accuracy: " + str(eval_accs[len(eval_accs)-1]))
-        print("Final Loss: " + str(eval_losses[len(eval_losses)-1]))
-        print("Total training time: ", str(time()-start_t))
+        print("Model: {}".format(self.id))
+        print("Epochs: {}".format(num_epochs))
+        print("Best Accuracy: {:.2f}%".format(best_accuracy*100))
+        print("Total training time: {:.2f}".format(time()-start_t))
         return {
-            "losses": eval_losses,
-            "accuracys": eval_accs,
-            "duration": time()-start_t
+            "train_losses": train_losses,
+            "train_accuracys": train_accs,
+            "eval_losses": eval_losses,
+            "eval_accuracys": eval_accs,
+            "duration": time()-start_t,
+            "best_accuracy": best_accuracy,
+            "best_state_dic": best_state_dic
         }
     
     def test(self, test_loader):
@@ -114,16 +129,21 @@ class Model(nn.Module):
     
     def run(self, train_loader, valid_loader, test_loader, title='', num_epochs=10):
         start_t = time()
-
         learn = self.learn(train_loader, valid_loader, num_epochs)
+        path = "{}/model_{}_{}_uuid_{}".format(self.state_dic_folder, learn["best_accuracy"], self.id, uuid.uuid1().hex)
+        torch.save(learn["best_state_dic"], path)
+        self.load_state_dict(torch.load(path))
         test = self.test(test_loader)
 
         print("total time: ", str(time()-start_t))
 
         performance = {
-            "losses" : learn["losses"],
-            "accuracys": learn["accuracys"],
+            "train_losses" : learn["train_losses"],
+            "train_accuracys": learn["train_accuracys"],
+            "eval_losses" : learn["eval_losses"],
+            "eval_accuracys": learn["eval_accuracys"],
             "train_duration": learn["duration"],
+            "best_accuracy": learn["best_accuracy"],
             "test_duration": test["duration"],
             "test_loss" : test["loss"],
             "test_accuracy": test["accuracy"]
@@ -143,17 +163,24 @@ class Model(nn.Module):
     def plot_performance(self, performance, title=''):
         plt.clf()
         x = np.array([c for c, _ in enumerate(performance["losses"], start=1)])
-        y = np.array([v for v in performance["losses"]])
+        y1 = np.array([v for v in performance["train_losses"]])
+        y2 = np.array([v for v in performance["eval_losses"]])
 
         plt.subplot(2, 1, 1)
-        plt.plot(x, y)
+        plt.plot(x, y1)
+        plt.plot(x, y2)
+        plt.legend(["train", "val"])
+
         plt.ylabel("loss")
 
         x = np.array([c for c, _ in enumerate(performance["accuracys"], start=1)])
-        y = np.array([v for v in performance["accuracys"]])
+        y1 = np.array([v for v in performance["train_accuracys"]])
+        y2 = np.array([v for v in performance["eval_accuracys"]])
 
         plt.subplot(2, 1, 2)
-        plt.plot(x, y)
+        plt.plot(x, y1)
+        plt.plot(x, y2)
+        plt.legend(["train", "val"])
         plt.ylabel("accuracy")
         plt.ylim(0, 1)
 

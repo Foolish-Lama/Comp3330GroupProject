@@ -13,13 +13,13 @@ using2d = ModuleLists.Using2d()
 
 
 data = NaturalScenesSubset('D:/projects/data/NaturalScenes/seg_train', 'D:/projects/data/NaturalScenes/seg_test')
-
+"""
 for ml, title, i in zip(using2d.all_module_lists, using2d.all_module_titles, range(1, len(using2d.all_module_lists))):
     model = Model(i, 'using2d', ml, using2d.optimizer_class, using2d.loss_fn_class)
     model.run(*data.loaders, title=title)
 
 data = NaturalScenes('D:/projects/data/NaturalScenes/seg_train', 'D:/projects/data/NaturalScenes/seg_test')
-
+"""
 loss_fn_class = nn.NLLLoss
 optimizer_class = optim.Adam
 
@@ -50,5 +50,5 @@ module_list = nn.ModuleList([
     ),
 ])
 
-model = Model(i, 'fullData', module_list, optimizer_class, loss_fn_class)
-model.run(*data.loaders, title="theOne", num_epochs=50)
+model = Model(1, 'testing', module_list, optimizer_class, loss_fn_class)
+model.run(*data.loaders, title="test", num_epochs=5)
