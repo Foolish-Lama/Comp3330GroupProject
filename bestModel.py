@@ -43,8 +43,9 @@ optimizer_class = optim.NAdam
 loss_fn_class = nn.NLLLoss
 
 title = "bestModel1"
-i = 1
+id = 1
 
-model = Model(i, outputFile, module_list, optimizer_class, loss_fn_class)
-model.run(*data.loaders, title=title, num_epochs=5)
+model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model.run(*data.loaders, title=title, num_epochs=100)
+
 
