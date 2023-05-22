@@ -32,7 +32,7 @@ class Model(nn.Module):
         self.performances_file = json_file(self.output_folder+"/performances.json")
 
         self.module_list = module_list
-        self.optimizer = optimizer_class(self.parameters(), lr=0.1)
+        self.optimizer = optimizer_class(self.parameters(), lr=1)
         self.loss_fn = loss_fn_class()
         self.to(device)
 
