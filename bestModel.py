@@ -38,13 +38,13 @@ module_list = nn.ModuleList([
     )
 ])
 
-outputFile = "learningRate"
+outputFile = "bestModel"
 optimizer_class = optim.NAdam
 loss_fn_class = nn.NLLLoss
 
-title = "bestModel"
+title = "bestModel1"
 i = 1
 
 model = Model(i, outputFile, module_list, optimizer_class, loss_fn_class)
-model.run(*data.loaders, title=title, num_epochs=3)
+model.run(*data.loaders, title=title, num_epochs=5)
 
