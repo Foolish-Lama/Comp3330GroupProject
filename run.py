@@ -7,8 +7,7 @@ from naturalScenesData import NaturalScenes, NaturalScenesSubset
 from Model import Model
 import ModuleLists
 
-data = NaturalScenes('D:/programming/data/NaturalScenes/seg_train', 'D:/programming/data/NaturalScenes/seg_test')
-
+data = NaturalScenes('E:/programming/data/NaturalScenes/seg_train', 'E:/programming/data/NaturalScenes/seg_test')
 
 module_list = nn.ModuleList([
     nn.Sequential(
@@ -65,16 +64,15 @@ model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
 model.optimizer = optimizer_class(model.parameters(), lr=0.0001)
 model.run(*data.loaders, title=title, num_epochs=10)
 
-title = "lr 0.00001"
-id = 5
+
+
+outputFile = "BestModel"
+optimizer_class = optim.Adam
+loss_fn_class = nn.NLLLoss
+
+id = 1
 model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
-model.optimizer = optimizer_class(model.parameters(), lr=0.00001)
-model.run(*data.loaders, title=title, num_epochs=10)
-
-title = "lr 0.000001"
-id = 6
-model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
-model.optimizer = optimizer_class(model.parameters(), lr=0.000001)
-model.run(*data.loaders, title=title, num_epochs=10)
-
-
+model.optimizer = optimizer_class(model.parameters(), lr=0.0005)
+for n in range(10):
+    title = str(n*10) + " epochs"
+    model.run(*data.loaders, title=title, num_epochs=10)

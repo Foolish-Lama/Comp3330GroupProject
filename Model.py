@@ -100,9 +100,6 @@ class Model(nn.Module):
             eval_accs.append(eval_acc)
             if eval_acc > best_accuracy:
                 best_accuracy = eval_acc
-                best_state_dic = self.state_dict()
-                path = "{}/abc_model_{}_{}_uuid_{}".format(self.state_dic_folder, eval_acc, self.id, uuid.uuid1().hex)
-                torch.save(self.state_dict(), path)
         
         print()
         print("Model: {}".format(self.id))
@@ -116,7 +113,6 @@ class Model(nn.Module):
             "eval_accuracys": eval_accs,
             "duration": time()-start_t,
             "best_accuracy": best_accuracy,
-            "best_state_dic": best_state_dic
         }
     
     def test(self, test_loader):
