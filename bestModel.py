@@ -46,6 +46,7 @@ title = "bestModel1"
 id = 1
 
 model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model.optimizer = optimizer_class(model.parameters(), lr=0.0005)
 model.run(*data.loaders, title=title, num_epochs=100)
 
 
