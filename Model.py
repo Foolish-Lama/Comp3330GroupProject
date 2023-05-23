@@ -19,7 +19,7 @@ class Model(nn.Module):
     def __init__(self, id, output_path, module_list, optimizer_class, loss_fn_class):
         super(Model, self).__init__()
         self.id = id
-
+        self.run_counter = 0
         self.output_folder = output_path
         if not os.path.exists(self.output_folder):
             os.mkdir(self.output_folder) 
@@ -32,7 +32,7 @@ class Model(nn.Module):
         self.performances_file = json_file(self.output_folder+"/performances.json")
 
         self.module_list = module_list
-        self.optimizer = optimizer_class(self.parameters(), lr=1)
+        self.optimizer = optimizer_class(self.parameters(), lr=0.0005)
         self.loss_fn = loss_fn_class()
         self.to(device)
 
@@ -130,16 +130,17 @@ class Model(nn.Module):
         }
     
     def run(self, train_loader, valid_loader, test_loader, title='', num_epochs=10):
+        self.run_counter += 1
         start_t = time()
         learn = self.learn(train_loader, valid_loader, num_epochs)
-        path = "{}/model_{}_{}_uuid_{}".format(self.state_dic_folder, learn["best_accuracy"], self.id, uuid.uuid1().hex)
-        torch.save(learn["best_state_dic"], path)
-        self.load_state_dict(torch.load(path))
+        path = "{}/model_{}_run_{}_uuid_{}".format(self.state_dic_folder, self.id, self.run_counter, uuid.uuid1().hex)
+        torch.save(self.state_dict(), path)
         test = self.test(test_loader)
 
         print("total time: ", str(time()-start_t))
 
         performance = {
+            "model_id": self.id,
             "train_losses" : learn["train_losses"],
             "train_accuracys": learn["train_accuracys"],
             "eval_losses" : learn["eval_losses"],
@@ -188,4 +189,4 @@ class Model(nn.Module):
 
         plt.suptitle("model {}: {}".format(self.id, title))
 
-        plt.savefig("{}/model_{}_uuid_{}".format(self.plots_folder, self.id, uuid.uuid1().hex))
+        plt.savefig("{}/model_{}_run_{}_uuid_{}".format(self.plots_folder, self.id, self.run_counter,uuid.uuid1().hex))

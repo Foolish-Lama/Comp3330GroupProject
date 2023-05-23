@@ -7,7 +7,7 @@ from naturalScenesData import NaturalScenes, NaturalScenesSubset
 from Model import Model
 import ModuleLists
 
-data = NaturalScenes('D:/projects/data/NaturalScenes/seg_train', 'D:/projects/data/NaturalScenes/seg_test')
+data = NaturalScenes('D:/programming/data/NaturalScenes/seg_train', 'D:/programming/data/NaturalScenes/seg_test')
 
 
 module_list = nn.ModuleList([
@@ -37,14 +37,44 @@ module_list = nn.ModuleList([
     )
 ])
 
-outputFile = "bestModel"
+outputFile = "learningRateFullData"
 optimizer_class = optim.Adam
 loss_fn_class = nn.NLLLoss
 
-title = "bestModel3"
-id = 3
-
+title = "lr 0.1"
+id = 1
 model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
-model.run(*data.loaders, title=title, num_epochs=100)
+model.optimizer = optimizer_class(model.parameters(), lr=0.1)
+model.run(*data.loaders, title=title, num_epochs=10)
+
+title = "lr 0.01"
+id = 2
+model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model.optimizer = optimizer_class(model.parameters(), lr=0.01)
+model.run(*data.loaders, title=title, num_epochs=10)
+
+title = "lr 0.001"
+id = 3
+model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model.optimizer = optimizer_class(model.parameters(), lr=0.001)
+model.run(*data.loaders, title=title, num_epochs=10)
+
+title = "lr 0.0001"
+id = 4
+model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model.optimizer = optimizer_class(model.parameters(), lr=0.0001)
+model.run(*data.loaders, title=title, num_epochs=10)
+
+title = "lr 0.00001"
+id = 5
+model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model.optimizer = optimizer_class(model.parameters(), lr=0.00001)
+model.run(*data.loaders, title=title, num_epochs=10)
+
+title = "lr 0.000001"
+id = 6
+model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model.optimizer = optimizer_class(model.parameters(), lr=0.000001)
+model.run(*data.loaders, title=title, num_epochs=10)
 
 
