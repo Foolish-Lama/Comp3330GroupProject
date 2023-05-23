@@ -3,12 +3,11 @@
 
 from torch.utils.data import DataLoader, random_split, Subset
 from torchvision import transforms
-from torchvision.datasets import ImageFolder
-
-
+from torchvision.datasets import ImageFolder, VisionDataset
+from PIL import Image
+import os
 
 class NaturalScenes():
-
     train_transforms = transforms.Compose([
         transforms.RandomResizedCrop(scale=(0.6, 1.0), size=(144, 144)),
         transforms.RandomHorizontalFlip(),
@@ -34,6 +33,7 @@ class NaturalScenes():
         self.loaders = [self.train_loader, self.valid_loader, self.test_loader]
 
 class NaturalScenesSubset(NaturalScenes):
+    #20% subset
     def __init__(self, train_data_path, eval_data_path):
         super().__init__(train_data_path, eval_data_path)
         self.train_data = Subset(self.train_data, [i for i, _ in enumerate(self.train_data) if i % 5 == 0])
@@ -46,3 +46,19 @@ class NaturalScenesSubset(NaturalScenes):
         self.test_loader = DataLoader(dataset=self.test_data, batch_size=len(self.test_data), shuffle=True)
         
         self.loaders = [self.train_loader, self.valid_loader, self.test_loader]
+
+class NaturalScenesPredications(NaturalScenes):
+    def __init__(self, prediction_data_path):
+        self.prediction_data_path = prediction_data_path
+        self.images_transformed = []
+        self.image_names = []
+        for image_name in os.listdir(self.prediction_data_path):
+            self.image_names.append(image_name)
+
+            image_path = self.prediction_data_path + "/" + image_name
+            image = Image.open(image_path)
+            image_transormed = self.eval_transforms(image)
+            image_squeezed = image_transormed.unsqueeze(0)
+            self.images_transformed.append(image_squeezed)
+
+        self.images = [x for x in zip(self.image_names, self.images_transformed)]

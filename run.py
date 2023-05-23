@@ -5,10 +5,12 @@ from torch import nn, optim
 
 from naturalScenesData import NaturalScenes, NaturalScenesSubset
 from Model import Model
-import ModuleLists
+import tests
 
 data = NaturalScenes('E:/programming/data/NaturalScenes/seg_train', 'E:/programming/data/NaturalScenes/seg_test')
 
+
+# model parameters
 module_list = nn.ModuleList([
     nn.Sequential(
         nn.Conv2d(3, 16, 3, 1, "same"),
@@ -36,42 +38,44 @@ module_list = nn.ModuleList([
     )
 ])
 
-outputFile = "learningRateFullData"
+outputFolder = "learningRateFullData"
 optimizer_class = optim.Adam
 loss_fn_class = nn.NLLLoss
 
+
+#testing learning rates
 title = "lr 0.1"
 id = 1
-model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model = Model(id, outputFolder, module_list, optimizer_class, loss_fn_class)
 model.optimizer = optimizer_class(model.parameters(), lr=0.1)
 model.run(*data.loaders, title=title, num_epochs=10)
 
 title = "lr 0.01"
 id = 2
-model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model = Model(id, outputFolder, module_list, optimizer_class, loss_fn_class)
 model.optimizer = optimizer_class(model.parameters(), lr=0.01)
 model.run(*data.loaders, title=title, num_epochs=10)
 
 title = "lr 0.001"
 id = 3
-model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model = Model(id, outputFolder, module_list, optimizer_class, loss_fn_class)
 model.optimizer = optimizer_class(model.parameters(), lr=0.001)
 model.run(*data.loaders, title=title, num_epochs=10)
 
 title = "lr 0.0001"
 id = 4
-model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model = Model(id, outputFolder, module_list, optimizer_class, loss_fn_class)
 model.optimizer = optimizer_class(model.parameters(), lr=0.0001)
 model.run(*data.loaders, title=title, num_epochs=10)
 
 
-
-outputFile = "BestModel"
+# testing best model
+outputFolder = "BestModel"
 optimizer_class = optim.Adam
 loss_fn_class = nn.NLLLoss
 
 id = 1
-model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
+model = Model(id, outputFolder, module_list, optimizer_class, loss_fn_class)
 model.optimizer = optimizer_class(model.parameters(), lr=0.0005)
 for n in range(10):
     title = str(n*10) + " epochs"

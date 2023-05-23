@@ -83,6 +83,7 @@ class Model(nn.Module):
         return e_loss.item(), e_accuracy.item()
 
     def learn(self, train_loader, eval_loader, num_epochs=10):
+        # evolves and then validates every epoch
         start_t = time()
         train_losses = []
         train_accs = []
@@ -126,6 +127,7 @@ class Model(nn.Module):
         }
     
     def run(self, train_loader, valid_loader, test_loader, title='', num_epochs=10):
+        # trains and and tests final state
         self.run_counter += 1
         start_t = time()
         learn = self.learn(train_loader, valid_loader, num_epochs)
@@ -152,7 +154,7 @@ class Model(nn.Module):
         return performance
 
     def test_model(self, train_loader, valid_loader, test_loader):
-        # will fuck with training, alittle
+        # just to make sure everything works
         print()
         print("testing model: "+str(self.id))
         self.learn(train_loader, valid_loader, 1)
