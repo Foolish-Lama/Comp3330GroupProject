@@ -45,10 +45,10 @@ loss_fn_class = nn.NLLLoss
 model = Model(id, outputFile, module_list, optimizer_class, loss_fn_class)
 model.optimizer = optimizer_class(model.parameters(), lr=0.0005)
 
-model.load_state_dict(torch.load('testsFour/BestModel/state_dics/model_1_run_10_uuid_9802706af94811eda9b528d0ea2e314f'))
+model.load_state_dict(torch.load('testResults/testsFour/BestModel/state_dics/model_1_run_10_uuid_9802706af94811eda9b528d0ea2e314f'))
 model.eval()
 
-data = NaturalScenesPredications('E:/programming/data/NaturalScenes/seg_pred')
+data = NaturalScenesPredications('D:/programming/data/NaturalScenes/seg_pred')
 
 with open('predictions.csv', 'w', newline='') as file:
     writer = csv.writer(file)

@@ -7,7 +7,7 @@ from naturalScenesData import NaturalScenes, NaturalScenesSubset
 from Model import Model
 import tests
 
-data = NaturalScenes('E:/programming/data/NaturalScenes/seg_train', 'E:/programming/data/NaturalScenes/seg_test')
+data = NaturalScenes('D:/programming/data/NaturalScenes/seg_train', 'D:/programming/data/NaturalScenes/seg_test')
 
 
 # model parameters
